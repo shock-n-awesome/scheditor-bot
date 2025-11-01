@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+env/
+venv/
+
+# macOS / editors
+.DS_Store
+.vscode/
+.idea/
+
+# Local runtime artifacts
+*.log
+bot.db
+.env
+.env.*
+!.env.example
+
+# Media / binary blobs (avoid committing podcast files)
+*.wav
+*.mp3
+*.flac
+*.aup3
+*.zip
+*.mov
+*.mp4
