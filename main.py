@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS requests (
 """)
 conn.commit()
 
-# Discord bot (slash command for intake)
+# Discord bot
 intents = discord.Intents.default()
 client = discord.Client(
     intents=intents,
@@ -93,12 +93,12 @@ async def request_edit(interaction: discord.Interaction,
 
     card = trello_create_card(REQUESTS_LIST_ID, episode_title, desc)
 
-    # attach link or file URL (Discord CDN) to the card
+    # attach link or file URL to the card
     if drive_link:
         trello_attach(card["id"], drive_link, "Source files")
 
     if file:
-        # Discord attachment URLs are accessible via link; good enough for MVP.
+        # Discord attachment URLs are accessible via link
         trello_attach(card["id"], file.url, file.filename)
 
     # store mapping for later notifications
@@ -121,7 +121,7 @@ app = FastAPI()
 def healthcheck():
     return {"ok": True}
 
-# Trello verifies webhooks with a HEAD request; return 200.
+# Trello verifies webhooks with a HEAD request, return 200.
 @app.head("/trello")
 def trello_head():
     return Response(status_code=200)
@@ -148,7 +148,7 @@ async def trello_webhook(req: Request):
             if row:
                 user_id, channel_id, title = row
 
-                # Pre-compute any final links here (we're in FastAPI's thread)
+                # Pre-compute any final links
                 final_links = None
                 if list_after["id"] == COMPLETE_LIST_ID:
                     try:
@@ -164,7 +164,7 @@ async def trello_webhook(req: Request):
                 if final_links:
                     text += f"\n📦 Final files/links:\n{final_links}"
 
-                # Post on the bot's loop (do NOT await discord.py in this thread)
+                # Post on the bot's loop
                 asyncio.run_coroutine_threadsafe(
                     post_update_to_channel(
                         channel_id=int(channel_id),
