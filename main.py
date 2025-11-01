@@ -21,7 +21,7 @@ TIMEDOUT_LIST_ID   = os.getenv("TRELLO_TIMEDOUT_LIST_ID")
 
 TRELLO_BASE = "https://api.trello.com/1"
 
-# ---- tiny persistence for card<->user mapping
+# tiny persistence for card<->user mapping
 conn = sqlite3.connect("bot.db", check_same_thread=False)
 conn.execute("""
 CREATE TABLE IF NOT EXISTS requests (
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS requests (
 """)
 conn.commit()
 
-# ---- Discord bot (slash command for intake)
+# Discord bot (slash command for intake)
 intents = discord.Intents.default()
 client = discord.Client(
     intents=intents,
