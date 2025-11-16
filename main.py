@@ -121,9 +121,9 @@ app = FastAPI()
 def healthcheck():
     return {"ok": True}
 
-# Trello verifies webhooks with a HEAD request, return 200.
-@app.head("/trello")
-def trello_head():
+# Trello verifies webhooks with a GET (and/or HEAD); FastAPI auto-adds HEAD.
+@app.get("/trello")
+def trello_ping():
     return Response(status_code=200)
 
 @app.post("/trello")
@@ -148,7 +148,6 @@ async def trello_webhook(req: Request):
             if row:
                 user_id, channel_id, title = row
 
-                # Pre-compute any final links
                 final_links = None
                 if list_after["id"] == COMPLETE_LIST_ID:
                     try:
@@ -159,12 +158,13 @@ async def trello_webhook(req: Request):
                     except Exception as e:
                         print("Attachment fetch failed:", e)
 
-                # Build the message text
-                text = f"🔔 **{title or card.get('name','Episode')}** moved from **{list_before['name']}** → **{list_after['name']}**."
+                text = (
+                    f"🔔 **{title or card.get('name','Episode')}** moved from "
+                    f"**{list_before['name']}** → **{list_after['name']}**."
+                )
                 if final_links:
                     text += f"\n📦 Final files/links:\n{final_links}"
 
-                # Post on the bot's loop
                 asyncio.run_coroutine_threadsafe(
                     post_update_to_channel(
                         channel_id=int(channel_id),
